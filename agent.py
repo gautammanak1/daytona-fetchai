@@ -11,7 +11,7 @@ from uagents_core.contrib.protocols.chat import (
     chat_protocol_spec,
 )
 
-from daytona import run_job_search_sandbox
+from daytona import run_job_search_sandbox, JobSearcher
 
 agent = Agent(
     name="job-search-agent",
@@ -55,8 +55,24 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
 
     loop = asyncio.get_running_loop()
     try:
-        _, url = await loop.run_in_executor(None, run_job_search_sandbox, query)
-        reply = f"Preview URL: {url}" if url else "No results or preview unavailable."
+        sandbox_task = loop.run_in_executor(None, run_job_search_sandbox, query)
+        jobs_task = loop.run_in_executor(None, JobSearcher().search_jobs, query, 1)
+        (sandbox_result, jobs) = await asyncio.gather(sandbox_task, jobs_task)
+
+        _, url = sandbox_result if isinstance(sandbox_result, tuple) else (None, None)
+
+        jobs_preview_lines = []
+        if jobs:
+            searcher = JobSearcher()
+            for i, job in enumerate(jobs[:5], 1):
+                j = searcher.format_job_listing(job)
+                jobs_preview_lines.append(
+                    f"{i}. {j['title']} — {j['company']} — {j['location']} ({j['employment_type']})\nApply: {j['apply_link']}"
+                )
+        jobs_preview = "\n\n".join(jobs_preview_lines) if jobs_preview_lines else "No jobs found."
+
+        url_part = f"Preview URL: {url}" if url else "Preview URL unavailable."
+        reply = f"{url_part}\n\nTop results:\n{jobs_preview}"
     except Exception as e:
         reply = f"Error: {str(e)}"
 
