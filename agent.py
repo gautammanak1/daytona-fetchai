@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 import asyncio
 from datetime import datetime
 from uuid import uuid4
@@ -11,7 +11,7 @@ from uagents_core.contrib.protocols.chat import (
     chat_protocol_spec,
 )
 
-from agent import run_job_search_sandbox
+from daytona import run_job_search_sandbox
 
 agent = Agent(
     name="job-search-agent",
