@@ -1,5 +1,11 @@
 # Job Search Sandbox (Daytona + Flask + uAgents)
 
+[![Fetch.ai](https://img.shields.io/badge/Fetch.ai-FET-1C2C4C)](https://fetch.ai)
+[![uAgents](https://img.shields.io/badge/uAgents-chat-blue)](https://github.com/fetchai/uAgents)
+[![Daytona](https://img.shields.io/badge/Daytona-sandbox-orange)](https://www.daytona.io)
+[![Sandbox](https://img.shields.io/badge/Sandbox-running-success)](#)
+[![Innovation‑BA](https://img.shields.io/badge/Innovation%E2%80%91BA-innovation-purple)](#)
+
 A small system that:
 - Parses a natural-language job query
 - Searches jobs via RapidAPI JSearch
@@ -53,6 +59,12 @@ python3 agent.py
 - The agent starts on port `8000` with a mailbox enabled. Send a `ChatMessage` containing your job query from another uAgent or an integration that speaks the uAgents chat protocol.
 
 ## High-Level Workflow (Mermaid)
+### Workflow
+- User sends a natural-language job query
+- Agent triggers sandbox job search and web preview creation
+- Flask app with formatted results runs inside Daytona sandbox
+- Agent replies with preview URL and top results
+
 ### Flowchart
 ```mermaid
 flowchart TD
