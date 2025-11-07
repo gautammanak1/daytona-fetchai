@@ -4,7 +4,9 @@
 [![uAgents](https://img.shields.io/badge/uAgents-chat-blue)](https://github.com/fetchai/uAgents)
 [![Daytona](https://img.shields.io/badge/Daytona-sandbox-orange)](https://www.daytona.io)
 [![Sandbox](https://img.shields.io/badge/Sandbox-running-success)](#)
-[![Innovation‑BA](https://img.shields.io/badge/Innovation%E2%80%91BA-innovation-purple)](#)
+![innovationlab](https://img.shields.io/badge/innovationlab-3D8BD3)
+![tag:uagents](https://img.shields.io/badge/tag-uagents-blue)
+[![GitHub](https://img.shields.io/badge/GitHub-daytona--fetchai-black?logo=github)](https://github.com/gautammanak1/daytona-fetchai)
 
 A small system that:
 - Parses a natural-language job query
