@@ -22,8 +22,7 @@ class JobSearcher:
         """Initialize API credentials from environment variables"""
         self.jsearch_api_key = os.getenv('JSEARCH_API_KEY', '')
         self.jsearch_host = "jsearch.p.rapidapi.com"
-        self.asi_api_key = os.getenv('ASI_ONE_API_KEY', '')
-        self.asi_url = "https://api.asi1.ai/v1/chat/completions"
+        # ASI integration removed (unused)
     
     def parse_job_query(self, user_prompt: str) -> Dict[str, str]:
         """Parse user prompt to extract job search parameters"""

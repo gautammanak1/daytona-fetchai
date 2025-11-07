@@ -21,8 +21,6 @@ Create a `.env` file in the project root with:
 ```ini
 DAYTONA_API_KEY=your_daytona_api_key
 JSEARCH_API_KEY=your_rapidapi_key
-# Optional / currently unused in code path, kept for future use
-ASI_ONE_API_KEY=your_asi_api_key
 ```
 
 ## Install Dependencies
