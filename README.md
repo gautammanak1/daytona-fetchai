@@ -7,8 +7,8 @@ A small system that:
 - Optionally exposes this flow through a uAgents chat agent
 
 ## Project Structure
-- `daytona.py`: Core logic. Searches jobs, generates a Flask app from results, deploys/runs it inside a Daytona sandbox, and returns a preview URL.
-- `agent.py`: uAgents chat agent. Receives a chat message (your job query), calls `run_job_search_sandbox` from `daytona.py`, and replies with the preview URL.
+- `job_search.py`: Core logic. Searches jobs, generates a Flask app from results, deploys/runs it inside a Daytona sandbox, and returns a preview URL.
+- `agent.py`: uAgents chat agent. Receives a chat message (your job query), calls `run_job_search_sandbox` from `job_search.py`, and replies with the preview URL.
 
 ## Prerequisites
 - Python 3.10+
@@ -40,7 +40,7 @@ pip install uagents
 ### A) Run the CLI flow (no agents)
 This launches the Daytona sandbox and returns a live preview URL after you enter a query.
 ```bash
-python3 daytona.py
+python3 job_search.py
 # Example prompt when asked:
 #   Remote Python developer in San Francisco
 ```
@@ -58,7 +58,7 @@ python3 agent.py
 flowchart TD
   U[User] -->|job query| A[Job Agent in agent.py]
   A -->|chat handler| H[handle_message]
-  H -->|calls threaded| R[run_job_search_sandbox in daytona.py]
+  H -->|calls threaded| R[run_job_search_sandbox in job_search.py]
 
   subgraph Daytona_Flow
     R --> C[Create Daytona sandbox]
@@ -79,7 +79,7 @@ flowchart TD
 sequenceDiagram
   actor User
   participant Agent as Job Agent - agent.py
-  participant Runner as run_job_search_sandbox - daytona.py
+  participant Runner as run_job_search_sandbox - job_search.py
   participant Daytona as Daytona Sandbox
   participant JSearch as RapidAPI JSearch
   participant Flask as Flask App in sandbox

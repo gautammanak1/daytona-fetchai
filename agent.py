@@ -11,7 +11,7 @@ from uagents_core.contrib.protocols.chat import (
     chat_protocol_spec,
 )
 
-from daytona import run_job_search_sandbox, JobSearcher
+from job_search import run_job_search_sandbox, JobSearcher
 
 agent = Agent(
     name="job-search-agent",
