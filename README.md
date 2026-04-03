@@ -1,128 +1,97 @@
-# Job Search Sandbox (Daytona + Flask + uAgents)
+# Job Search Agent
 
-[![Fetch.ai](https://img.shields.io/badge/Fetch.ai-FET-1C2C4C)](https://fetch.ai)
-[![uAgents](https://img.shields.io/badge/uAgents-chat-blue)](https://github.com/fetchai/uAgents)
-[![Daytona](https://img.shields.io/badge/Daytona-sandbox-orange)](https://www.daytona.io)
-[![Sandbox](https://img.shields.io/badge/Sandbox-running-success)](#)
+[![Fetch.ai](https://img.shields.io/badge/Fetch.ai-uAgents-purple)](https://fetch.ai)
+[![Daytona](https://img.shields.io/badge/Daytona-Sandbox-orange)](https://www.daytona.io)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://python.org)
 ![innovationlab](https://img.shields.io/badge/innovationlab-3D8BD3)
 ![tag:uagents](https://img.shields.io/badge/tag-uagents-blue)
-[![GitHub](https://img.shields.io/badge/GitHub-daytona--fetchai-black?logo=github)](https://github.com/gautammanak1/daytona-fetchai)
 
-A small system that:
-- Parses a natural-language job query
-- Searches jobs via RapidAPI JSearch
-- Spins up a Daytona sandbox and deploys a minimal Flask web preview of results
-- Optionally exposes this flow through a uAgents chat agent
+A natural-language job search agent built with Fetch.ai uAgents and Daytona sandboxes. Parses job queries, searches via RapidAPI JSearch, and deploys a live Flask preview of matching results inside a secure sandbox.
 
-## Project Structure
-- `job_search.py`: Core logic. Searches jobs, generates a Flask app from results, deploys/runs it inside a Daytona sandbox, and returns a preview URL.
-- `agent.py`: uAgents chat agent. Receives a chat message (your job query), calls `run_job_search_sandbox` from `job_search.py`, and replies with the preview URL.
+## Features
 
-## Prerequisites
+- **Natural Language Queries** — Parses job type, location, employment type, and experience level from free-text input
+- **JSearch Integration** — Searches real job listings via the RapidAPI JSearch API
+- **Sandbox Deployment** — Spins up a Daytona sandbox with a Flask app to display results
+- **Live Preview URL** — Returns a browsable URL with formatted job listings
+- **Chat Protocol** — Works as a uAgent with standard chat protocol for agent-to-agent messaging
+- **Smart Parsing** — Extracts keywords like "remote", "internship", "senior" from natural language
+
+## Architecture
+
+```
+User Chat → uAgent → Parse Query → JSearch API → Daytona Sandbox
+                                                      ├── Generate Flask app
+                                                      ├── Render job listings
+                                                      └── Return preview URL
+```
+
+## Tech Stack
+
+| Component | Technology |
+|-----------|-----------|
+| Agent Framework | Fetch.ai uAgents + Chat Protocol |
+| Sandbox | Daytona |
+| Job Search API | JSearch (RapidAPI) |
+| Web Preview | Flask |
+| NLP Parsing | Built-in keyword extraction |
+
+## Getting Started
+
+### Prerequisites
+
 - Python 3.10+
 - Daytona API key
 - RapidAPI JSearch API key
 
-## Environment Variables
-Create a `.env` file in the project root with:
+### Installation
 
-```ini
+```bash
+git clone https://github.com/gautammanak1/daytona-fetchai.git
+cd daytona-fetchai
+pip install -r requirements.txt
+```
+
+### Configuration
+
+Create a `.env` file:
+
+```env
 DAYTONA_API_KEY=your_daytona_api_key
 JSEARCH_API_KEY=your_rapidapi_key
 ```
 
-## Install Dependencies
+### Run
+
+**CLI Mode** (no agents):
+
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install requests python-dotenv flask daytona uagents uagents-core
+python job_search.py
 ```
 
-If `uagents-core` is unavailable on your index, try:
+**Agent Mode** (uAgents chat protocol):
+
 ```bash
-pip install uagents
+python agent.py
 ```
 
-## Run Modes
-### A) Run the CLI flow (no agents)
-This launches the Daytona sandbox and returns a live preview URL after you enter a query.
-```bash
-python3 job_search.py
-# Example prompt when asked:
-#   Remote Python developer in San Francisco
+### Example Query
+
+```
+Remote data science internship in New York
 ```
 
-### B) Run the uAgents chat agent
-This exposes the same capability behind a uAgents chat interface.
-```bash
-python3 agent.py
+The agent parses this into job type, location, and employment type, then returns a live preview URL with matching listings.
+
+## Project Structure
+
 ```
-- The agent starts on port `8000` with a mailbox enabled. Send a `ChatMessage` containing your job query from another uAgent or an integration that speaks the uAgents chat protocol.
-
-## High-Level Workflow (Mermaid)
-### Workflow
-- User sends a natural-language job query
-- Agent triggers sandbox job search and web preview creation
-- Flask app with formatted results runs inside Daytona sandbox
-- Agent replies with preview URL and top results
-
-### Flowchart
-```mermaid
-flowchart TD
-  U[User] -->|job query| A[Job Agent in agent.py]
-  A -->|chat handler| H[handle_message]
-  H -->|calls threaded| R[run_job_search_sandbox in job_search.py]
-
-  subgraph Daytona_Flow
-    R --> C[Create Daytona sandbox]
-    C --> S[Search jobs via RapidAPI JSearch]
-    S --> F[Create Flask app from results]
-    F --> UPL[Upload app.py to sandbox]
-    UPL --> DEP[Install Flask in sandbox]
-    DEP --> RUN[Run Flask app]
-    RUN --> PV[Get preview URL]
-  end
-
-  PV --> H
-  H -->|reply| U
+├── agent.py           # uAgents chat agent
+├── job_search.py      # Core job search + Daytona sandbox logic
+├── requirements.txt   # Python dependencies
+└── README.md
 ```
 
-### Sequence Diagram
-```mermaid
-sequenceDiagram
-  actor User
-  participant Agent as Job Agent - agent.py
-  participant Runner as run_job_search_sandbox - job_search.py
-  participant Daytona as Daytona Sandbox
-  participant JSearch as RapidAPI JSearch
-  participant Flask as Flask App in sandbox
+## License
 
-  User->>Agent: Send chat message with job query
-  Agent->>Agent: handle_message parses text
-  Agent->>Runner: run_job_search_sandbox(query)
-  Runner->>Daytona: create()
-  Runner->>JSearch: GET /search (query)
-  JSearch-->>Runner: jobs JSON
-  Runner->>Runner: create_flask_app(jobs)
-  Runner->>Daytona: upload app.py
-  Runner->>Daytona: pip install flask
-  Runner->>Flask: start app (python3 app.py)
-  Runner->>Daytona: get_preview_link(3000)
-  Runner-->>Agent: preview URL
-  Agent-->>User: reply with preview URL
-```
-
-## Usage Tips
-- If the preview initially returns 502, wait a few seconds and refresh; the app may still be warming up.
-- Queries can be natural language; locations like “San Francisco” or “Remote” are recognized heuristically.
-
-## Troubleshooting
-- "DAYTONA_API_KEY environment variable not set": add it to `.env` or your shell env.
-- 502 / cannot connect: give the sandbox ~30–45 seconds; ensure port `3000` is used in the preview URL.
-- No jobs found: broaden your query or remove restrictive terms.
-
-## Security Notes
-- Do not commit real API keys. Use `.env` locally and a secret manager in CI/CD.
-
-
+MIT
